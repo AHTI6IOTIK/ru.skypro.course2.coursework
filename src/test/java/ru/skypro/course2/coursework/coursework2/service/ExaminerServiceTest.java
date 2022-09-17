@@ -13,34 +13,40 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ExaminerServiceTest {
-    QuestionServiceInterface questionService = mock(JavaQuestionService.class);
+    QuestionServiceInterface javaQuestionService = mock(JavaQuestionService.class);
+    QuestionServiceInterface mathQuestionService = mock(MathQuestionService.class);
     ExaminerServiceInterface out;
 
     @BeforeEach
     void setUp() {
-        when(questionService.getRandomQuestion())
-            .thenReturn(new Question("String1", "String1"))
+        when(javaQuestionService.getRandomQuestion())
             .thenReturn(new Question("String1", "String1"))
             .thenReturn(new Question("String2", "String2"))
-            .thenReturn(new Question("String2", "String2"))
-            .thenReturn(new Question("String3", "String3"))
             .thenReturn(new Question("String3", "String3"))
             .thenReturn(new Question("String4", "String4"))
-            .thenReturn(new Question("String4", "String4"))
             .thenReturn(new Question("String5", "String5"))
-            .thenReturn(new Question("String5", "String5"))
-            .thenReturn(new Question("String6", "String6"))
             .thenReturn(new Question("String6", "String6"))
         ;
 
-        when(questionService.size()).thenReturn(6); // потому что уникальных 6
+        when(mathQuestionService.getRandomQuestion())
+            .thenReturn(new Question("1 + 1", "2"))
+            .thenReturn(new Question("1 + 2", "3"))
+            .thenReturn(new Question("1 + 3", "4"))
+            .thenReturn(new Question("1 + 4", "5"))
+            .thenReturn(new Question("1 + 5", "6"))
+            .thenReturn(new Question("1 + 6", "7"))
+        ;
 
-        out = new ExaminerService(questionService);
+        when(javaQuestionService.size()).thenReturn(6);
+        when(mathQuestionService.size()).thenReturn(6);
+
+        out = new ExaminerService(mathQuestionService, javaQuestionService);
     }
 
     @Test
     void getQuestionsDistinctTest() {
         Collection<Question> questions = out.getQuestions(4);
+        System.out.println("questions = " + questions);
         assertEquals(
             questions
                 .stream()

@@ -9,28 +9,39 @@ import java.util.*;
 @Service
 public class ExaminerService implements ExaminerServiceInterface {
 
-    QuestionServiceInterface questionService;
+    QuestionServiceInterface[] questionServices;
 
-    public ExaminerService(QuestionServiceInterface questionService) {
-        this.questionService = questionService;
+    public ExaminerService(
+        QuestionServiceInterface mathQuestionService,
+        QuestionServiceInterface javaQuestionService
+    ) {
+        this.questionServices = new QuestionServiceInterface[]{javaQuestionService, mathQuestionService};
     }
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-        if (amount > questionService.size()) {
+
+        int maxQueries = 0;
+        for (QuestionServiceInterface service : questionServices) {
+            maxQueries += service.size();
+        }
+
+        if (amount > maxQueries) {
             throw new CountQuestionException();
         }
 
+        Set<Question> questions = new LinkedHashSet<>();
         int distinctCountQuestions = amount;
-        Set<Question> questions = new HashSet<>();
 
         while (distinctCountQuestions > 0) {
-            boolean isUniq = questions.add(
-                questionService.getRandomQuestion()
-            );
+            for (QuestionServiceInterface service : questionServices) {
+                boolean isUniq = questions.add(
+                    service.getRandomQuestion()
+                );
 
-            if (isUniq) {
-                distinctCountQuestions--;
+                if (isUniq) {
+                    distinctCountQuestions--;
+                }
             }
         }
 

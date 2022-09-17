@@ -2,62 +2,39 @@ package ru.skypro.course2.coursework.coursework2.service;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.course2.coursework.coursework2.entity.Question;
-import ru.skypro.course2.coursework.coursework2.exception.DuplicateQuestionException;
-import ru.skypro.course2.coursework.coursework2.exception.NotExistQuestionException;
-import ru.skypro.course2.coursework.coursework2.factory.QuestionFactory;
+import ru.skypro.course2.coursework.coursework2.repository.QuestionRepositoryInterface;
 
 import java.util.*;
 
 @Service
 public class JavaQuestionService implements QuestionServiceInterface {
-    private final List<Question> questions = new ArrayList<>();
-    private final QuestionFactory factory;
-
-    public JavaQuestionService(QuestionFactory factory) {
-        this.factory = factory;
+    private final QuestionRepositoryInterface repository;
+    public JavaQuestionService(QuestionRepositoryInterface javaQuestionRepository) {
+        this.repository = javaQuestionRepository;
     }
-
     @Override
     public Question add(String question, String answer) {
-        Question questionEntity = factory.createItem(question, answer);
-
-        return add(questionEntity);
+        return repository.add(question, answer);
     }
-
     @Override
     public Question add(Question question) {
-        if (questions.contains(question)) {
-            throw new DuplicateQuestionException(question);
-        }
-
-        questions.add(question);
-
-        return question;
+        return repository.add(question);
     }
-
     @Override
     public Question remove(Question question) {
-        if (!questions.remove(question)) {
-            throw new NotExistQuestionException(question);
-        }
-
-        return question;
+        return repository.remove(question);
     }
-
     @Override
     public Collection<Question> getAll() {
-        return new ArrayList<>(questions);
+        return repository.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        return questions.get(
-            (int)(Math.random() * questions.size())
-        );
+        return repository.findByIndex((int)(Math.random() * repository.count()));
     }
-
     @Override
     public int size() {
-        return questions.size();
+        return repository.count();
     }
 }

@@ -9,13 +9,13 @@ import ru.skypro.course2.coursework.coursework2.service.QuestionServiceInterface
 
 import java.util.Collection;
 
-@RequestMapping("/exam/java")
+@RequestMapping("/exam/math")
 @RestController
-public class JavaQuestionController {
+public class MathQuestionController {
     private final QuestionServiceInterface questionService;
 
-    public JavaQuestionController(QuestionServiceInterface javaQuestionService) {
-        this.questionService = javaQuestionService;
+    public MathQuestionController(QuestionServiceInterface mathQuestionService) {
+        this.questionService = mathQuestionService;
     }
 
     @GetMapping

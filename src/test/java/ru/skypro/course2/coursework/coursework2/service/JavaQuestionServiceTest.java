@@ -2,133 +2,61 @@ package ru.skypro.course2.coursework.coursework2.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.skypro.course2.coursework.coursework2.entity.Question;
-import ru.skypro.course2.coursework.coursework2.exception.DuplicateQuestionException;
-import ru.skypro.course2.coursework.coursework2.exception.NotExistQuestionException;
-import ru.skypro.course2.coursework.coursework2.factory.QuestionFactory;
+import ru.skypro.course2.coursework.coursework2.repository.JavaQuestionRepository;
+import ru.skypro.course2.coursework.coursework2.repository.QuestionRepositoryInterface;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class JavaQuestionServiceTest {
-    private QuestionServiceInterface out;
+    QuestionRepositoryInterface repository = mock(JavaQuestionRepository.class);
+    QuestionServiceInterface out;
 
     @BeforeEach
     void setUp() {
-        out = new JavaQuestionService(new QuestionFactory());
+        Question returnObject = new Question("Java?", "Java!");
+        when(repository.add("Java?", "Java!")).thenReturn(returnObject);
+        when(repository.add(new Question("Java?", "Java!"))).thenReturn(returnObject);
+        when(repository.remove(new Question("Java?", "Java!"))).thenReturn(returnObject);
+        when(repository.getAll()).thenReturn(List.of(returnObject));
+        when(repository.findByIndex(any(Integer.class))).thenReturn(returnObject);
+
+        out = new JavaQuestionService(repository);
     }
 
     @Test
-    void addFromObjectValueTest() {
-        out.add(new Question("Question", "Answer"));
-        assertEquals(
-            new ArrayList<>(List.of(new Question("Question", "Answer"))),
-            out.getAll()
-        );
+    void addReturnValueByStringsTest() {
+        Question expected = new Question("Java?", "Java!");
+        assertEquals(expected, repository.add("Java?", "Java!"));
     }
 
     @Test
-    void addFromObjectReturnValueTest() {
-        Question expected = new Question("Question", "Answer");
-        Question actual = out.add(expected);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void addFromObjectChangeSizeTest() {
-        out.add(new Question("Question", "Answer"));
-        assertEquals(1, out.size());
-    }
-
-    @Test
-    void addFromObjectThrowExceptionTest() {
-        out.add(new Question("Question", "Answer"));
-        assertThrows(DuplicateQuestionException.class, () -> out.add(new Question("Question", "Answer")));
-    }
-
-    @Test
-    void addFromStringReturnValueTest() {
-        Question expected = new Question("Question", "Answer");
-        Question actual = out.add("Question", "Answer");
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void addFromStringChangeSizeTest() {
-        out.add("Question", "Answer");
-        assertEquals(1, out.size());
-    }
-
-    @Test
-    void addFromStringThrowExceptionTest() {
-        out.add("Question", "Answer");
-        assertThrows(DuplicateQuestionException.class, () -> out.add("Question", "Answer"));
+    void addReturnValueByObjectTest() {
+        Question expected = new Question("Java?", "Java!");
+        assertEquals(expected, out.add(new Question("Java?", "Java!")));
     }
 
     @Test
     void removeReturnValueTest() {
-        Question expected = new Question("Question1", "Answer");
-        out.add("Question2", "Answer");
-        out.add("Question1", "Answer");
-        out.add("Question3", "Answer");
-        Question actual = out.remove(new Question("Question1", "Answer"));
-        assertEquals(expected, actual);
+        Question expected = new Question("Java?", "Java!");
+        assertEquals(expected, out.remove(new Question("Java?", "Java!")));
     }
 
     @Test
-    void removeTest() {
-        out.add("Question2", "Answer");
-        out.add("Question1", "Answer");
-        out.add("Question3", "Answer");
-        out.remove(new Question("Question1", "Answer"));
-        assertEquals(
-            new ArrayList<>(List.of(
-                new Question("Question2", "Answer"),
-                new Question("Question3", "Answer")
-            )),
-            out.getAll()
-        );
+    void getAllTest() {
+        assertEquals(List.of(new Question("Java?", "Java!")), out.getAll());
     }
 
     @Test
-    void removeThrowExceptionTest() {
-        out.add("Question2", "Answer");
-        out.add("Question1", "Answer");
-        out.add("Question3", "Answer");
-        assertThrows(
-            NotExistQuestionException.class,
-            () -> out.remove(new Question("Question100", "Answer"))
-        );
-    }
-
-    @Test
-    void getAll() {
-        out.add("Question2", "Answer");
-        out.add("Question1", "Answer");
-        out.add("Question3", "Answer");
-        assertEquals(
-            new ArrayList<>(List.of(
-                new Question("Question2", "Answer"),
-                new Question("Question1", "Answer"),
-                new Question("Question3", "Answer")
-            )),
-            out.getAll()
-        );
-    }
-
-    @Test
-    void getRandomQuestion() {
-        out.add("Question2", "Answer");
-        out.add("Question1", "Answer");
-        out.add("Question3", "Answer");
-        assertTrue(
-            (new ArrayList<>(List.of(
-                new Question("Question2", "Answer"),
-                new Question("Question1", "Answer"),
-                new Question("Question3", "Answer")
-            ))).contains(out.getRandomQuestion())
-        );
+    void getRandomQuestionTest() {
+        assertEquals(new Question("Java?", "Java!"), out.getRandomQuestion());
     }
 }
