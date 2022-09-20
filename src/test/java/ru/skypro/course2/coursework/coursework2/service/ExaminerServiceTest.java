@@ -4,8 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.skypro.course2.coursework.coursework2.entity.Question;
 import ru.skypro.course2.coursework.coursework2.exception.CountQuestionException;
+import ru.skypro.course2.coursework.coursework2.exception.MethodNotAllowedException;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,15 +41,19 @@ class ExaminerServiceTest {
         ;
 
         when(javaQuestionService.size()).thenReturn(6);
-        when(mathQuestionService.size()).thenReturn(6);
+        when(mathQuestionService.size()).thenThrow(new MethodNotAllowedException());
 
-        out = new ExaminerService(mathQuestionService, javaQuestionService);
+        out = new ExaminerService(new HashMap<>(
+            Map.of(
+                "javaQuestionService", javaQuestionService,
+                "mathQuestionService", mathQuestionService
+            )
+        ));
     }
 
     @Test
     void getQuestionsDistinctTest() {
         Collection<Question> questions = out.getQuestions(4);
-        System.out.println("questions = " + questions);
         assertEquals(
             questions
                 .stream()

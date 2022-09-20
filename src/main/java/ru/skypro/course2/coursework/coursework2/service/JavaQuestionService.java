@@ -6,24 +6,29 @@ import ru.skypro.course2.coursework.coursework2.repository.QuestionRepositoryInt
 
 import java.util.*;
 
-@Service
+@Service("javaQuestionService")
 public class JavaQuestionService implements QuestionServiceInterface {
     private final QuestionRepositoryInterface repository;
+
     public JavaQuestionService(QuestionRepositoryInterface javaQuestionRepository) {
         this.repository = javaQuestionRepository;
     }
+
     @Override
     public Question add(String question, String answer) {
         return repository.add(question, answer);
     }
+
     @Override
     public Question add(Question question) {
         return repository.add(question);
     }
+
     @Override
     public Question remove(Question question) {
         return repository.remove(question);
     }
+
     @Override
     public Collection<Question> getAll() {
         return repository.getAll();
@@ -31,8 +36,9 @@ public class JavaQuestionService implements QuestionServiceInterface {
 
     @Override
     public Question getRandomQuestion() {
-        return repository.findByIndex((int)(Math.random() * repository.count()));
+        return repository.findByIndex((int) (Math.random() * repository.count()));
     }
+
     @Override
     public int size() {
         return repository.count();

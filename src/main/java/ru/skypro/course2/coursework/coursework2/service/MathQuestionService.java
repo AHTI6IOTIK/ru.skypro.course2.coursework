@@ -8,7 +8,7 @@ import ru.skypro.course2.coursework.coursework2.operation.OperationInterface;
 import java.util.Collection;
 import java.util.Random;
 
-@Service
+@Service("mathQuestionService")
 public class MathQuestionService implements QuestionServiceInterface {
     private static final int BASE_BOUND_RANDOM = 1000;
     private final Random random;

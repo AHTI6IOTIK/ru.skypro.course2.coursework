@@ -8,21 +8,21 @@ import java.util.*;
 
 @Service
 public class ExaminerService implements ExaminerServiceInterface {
-
-    QuestionServiceInterface[] questionServices;
+    private final Map<String, QuestionServiceInterface> questionServices;
 
     public ExaminerService(
-        QuestionServiceInterface mathQuestionService,
-        QuestionServiceInterface javaQuestionService
+        Map<String, QuestionServiceInterface> questionServices
     ) {
-        this.questionServices = new QuestionServiceInterface[]{javaQuestionService, mathQuestionService};
+        this.questionServices = questionServices;
     }
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-
         int maxQueries = 0;
-        for (QuestionServiceInterface service : questionServices) {
+        for (QuestionServiceInterface service : questionServices.values()) {
+            if (service instanceof MathQuestionService) {
+                continue;
+            }
             maxQueries += service.size();
         }
 
@@ -34,7 +34,7 @@ public class ExaminerService implements ExaminerServiceInterface {
         int distinctCountQuestions = amount;
 
         while (distinctCountQuestions > 0) {
-            for (QuestionServiceInterface service : questionServices) {
+            for (QuestionServiceInterface service : questionServices.values()) {
                 boolean isUniq = questions.add(
                     service.getRandomQuestion()
                 );
